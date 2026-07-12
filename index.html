@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>7号Suit舍 布料試搭</title>
+<meta name="theme-color" content="#8B2E1F">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <img src="assets/icon-192.png" alt="logo">
+      <div>
+        <h1>布料試搭</h1>
+        <div class="subtitle">拍下您挑選的布料，立即預覽</div>
+      </div>
+    </header>
+
+    <main class="stage">
+      <div class="canvas-wrap">
+        <canvas id="resultCanvas" width="896" height="1200"></canvas>
+        <div class="empty-hint" id="emptyHint">
+          <div class="big-icon">🧵</div>
+          <div>按下面「拍布料」<br>把選好的布料拍照，<br>馬上看套用在西裝上的樣子</div>
+        </div>
+      </div>
+
+      <div class="scale-control" id="scaleControl" style="display:none;">
+        <label for="scaleSlider">紋理大小</label>
+        <span class="scale-hint">拉太大 / 太小可以調整</span>
+        <input type="range" id="scaleSlider" min="0.08" max="0.6" step="0.01" value="0.22">
+      </div>
+
+      <div class="actions">
+        <label class="btn btn-primary" for="cameraInput">📷 拍布料 / 選照片</label>
+        <input type="file" id="cameraInput" accept="image/*" capture="environment">
+        <div class="btn-row">
+          <button class="btn btn-secondary" id="retakeBtn" disabled>🔄 重拍</button>
+          <button class="btn btn-secondary" id="downloadBtn" disabled>⬇️ 下載這張</button>
+        </div>
+      </div>
+
+      <div class="compare-strip">
+        <h2>本次比較（最多 4 塊布料，點縮圖可切換）</h2>
+        <div class="thumbs" id="thumbs"></div>
+      </div>
+    </main>
+
+    <footer class="app-footer">7号Suit舍 ｜ 布料試搭工具 v1</footer>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
