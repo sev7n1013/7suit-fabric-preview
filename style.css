@@ -112,6 +112,34 @@ html, body {
   font-size: 40px;
 }
 
+/* Mode control (整張套用 / 小樣本重複貼) */
+.mode-control {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  gap: 8px;
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 10px 8px;
+  border-radius: 10px;
+  border: 1.5px solid var(--coffee-light);
+  background: transparent;
+  color: var(--cream);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mode-btn.active {
+  background: var(--red);
+  border-color: var(--red);
+  color: var(--white);
+}
+
 /* Scale control */
 .scale-control {
   width: 100%;

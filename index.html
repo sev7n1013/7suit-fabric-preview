@@ -31,10 +31,15 @@
         </div>
       </div>
 
+      <div class="mode-control" id="modeControl" style="display:none;">
+        <button type="button" class="mode-btn active" id="modeCoverBtn">整張套用</button>
+        <button type="button" class="mode-btn" id="modeTileBtn">小樣本重複貼</button>
+      </div>
+
       <div class="scale-control" id="scaleControl" style="display:none;">
-        <label for="scaleSlider">紋理大小</label>
-        <span class="scale-hint">拉太大 / 太小可以調整</span>
-        <input type="range" id="scaleSlider" min="0.08" max="0.6" step="0.01" value="0.22">
+        <label for="scaleSlider" id="scaleLabel">縮放</label>
+        <span class="scale-hint" id="scaleHint">拉太大 / 太小可以調整</span>
+        <input type="range" id="scaleSlider" min="0.5" max="2.5" step="0.01" value="1">
       </div>
 
       <div class="actions">
