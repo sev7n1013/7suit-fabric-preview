@@ -1,4 +1,4 @@
-const CACHE_NAME = '7suit-fabric-preview-v13';
+const CACHE_NAME = '7suit-fabric-preview-v15';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
