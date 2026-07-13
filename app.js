@@ -81,6 +81,29 @@ function maskToAlphaCanvas(maskImg) {
 }
 
 let alphaMaskCanvas = null;
+let normalizedShadingCanvas = null;
+
+// 陰影層正規化：suit-shading.png 的「布料底色灰」(約亮度 148) 拉成純白，
+// multiply 白色 = 完全不影響 -> 布料顏色不再被灰色乘暗、失真
+// 只有比底色更暗的皺褶/陰影會留下來，變成純粹的立體感
+const SHADING_BASE_GRAY = 148; // 若換了西裝底圖，量一下新圖的布料平均亮度改這裡即可
+function buildNormalizedShading(img) {
+  const c = document.createElement('canvas');
+  c.width = CANVAS_W;
+  c.height = CANVAS_H;
+  const sctx = c.getContext('2d');
+  sctx.drawImage(img, 0, 0, CANVAS_W, CANVAS_H);
+  const imageData = sctx.getImageData(0, 0, CANVAS_W, CANVAS_H);
+  const data = imageData.data;
+  for (let i = 0; i < data.length; i += 4) {
+    const lum = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+    const v = Math.min(255, Math.round((lum / SHADING_BASE_GRAY) * 255));
+    data[i] = data[i + 1] = data[i + 2] = v;
+    data[i + 3] = 255;
+  }
+  sctx.putImageData(imageData, 0, 0);
+  return c;
+}
 
 // 模式 A：整張照片縮放置中鋪滿（像 CSS background-size: cover），zoom 可以再放大裁入
 function drawCoverZoom(targetCtx, img, w, h, zoom) {
@@ -143,6 +166,9 @@ function renderComposite(fabricImg, mode, scale) {
   if (!alphaMaskCanvas) {
     alphaMaskCanvas = maskToAlphaCanvas(suitMaskImg);
   }
+  if (!normalizedShadingCanvas) {
+    normalizedShadingCanvas = buildNormalizedShading(suitShadingImg);
+  }
 
   const fabricCanvas = document.createElement('canvas');
   fabricCanvas.width = CANVAS_W;
@@ -162,7 +188,7 @@ function renderComposite(fabricImg, mode, scale) {
 
   // 疊上灰階皺褶/打光層，讓布料貼合西裝立體感
   fctx.globalCompositeOperation = 'multiply';
-  fctx.drawImage(suitShadingImg, 0, 0, CANVAS_W, CANVAS_H);
+  fctx.drawImage(normalizedShadingCanvas, 0, 0, CANVAS_W, CANVAS_H);
   fctx.globalCompositeOperation = 'destination-in';
   fctx.drawImage(alphaMaskCanvas, 0, 0);
   fctx.globalCompositeOperation = 'source-over';
@@ -277,8 +303,8 @@ function resetCanvas() {
   modeControl.style.display = 'none';
 }
 
-cameraInput.addEventListener('change', async (e) => {
-  const file = e.target.files[0];
+// 共用：處理一張布料照片（拍照或相簿來的都走這裡）
+async function handleFabricFile(file, inputEl) {
   if (!file) return;
   if (!assetsReady) {
     showToast('素材載入中，請稍等一下再試一次');
@@ -306,9 +332,21 @@ cameraInput.addEventListener('change', async (e) => {
     showToast('這張照片讀取失敗，換一張試試');
   } finally {
     URL.revokeObjectURL(url);
-    cameraInput.value = '';
+    if (inputEl) inputEl.value = '';
   }
+}
+
+cameraInput.addEventListener('change', (e) => {
+  handleFabricFile(e.target.files[0], cameraInput);
 });
+
+// 相簿上傳：這個 input 沒有 capture 屬性，手機上會跳出「照片圖庫 / 拍照 / 選檔案」選單
+const galleryInput = document.getElementById('galleryInput');
+if (galleryInput) {
+  galleryInput.addEventListener('change', (e) => {
+    handleFabricFile(e.target.files[0], galleryInput);
+  });
+}
 
 retakeBtn.addEventListener('click', () => {
   cameraInput.click();

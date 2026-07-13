@@ -226,7 +226,8 @@ html, body {
   flex: 1;
 }
 
-#cameraInput {
+#cameraInput,
+#galleryInput {
   display: none;
 }
 
